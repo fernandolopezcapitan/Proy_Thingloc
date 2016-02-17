@@ -3,17 +3,14 @@ package com.dam.salesianostriana.di.thinglocv1.actitities;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.dam.salesianostriana.di.thinglocv1.R;
-import com.dam.salesianostriana.di.thinglocv1.greendao.Usuarios;
-import com.dam.salesianostriana.di.thinglocv1.greendao.UsuariosDao;
-import com.dam.salesianostriana.di.thinglocv1.pojoschema.Login;
+import com.dam.salesianostriana.di.thinglocv1.pojosthingloc.Login;
 import com.dam.salesianostriana.di.thinglocv1.utiles.Utiles;
 
 import retrofit.Call;
@@ -23,14 +20,14 @@ import retrofit.Retrofit;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private AlertDialog.Builder builder;
+
     EditText user, pass;
-    Button register;
+    Button btn_entrar;
     SharedPreferences prefs;
     SharedPreferences.Editor editor = null;
     Intent i;
-    UsuariosDao usuarioDao;
-
+    int errorCode;
+    String usuario,passw;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,12 +37,12 @@ public class LoginActivity extends AppCompatActivity {
 
         user = (EditText) findViewById(R.id.usuario);
         pass = (EditText) findViewById(R.id.pass);
-        register = (Button) findViewById(R.id.btn_entrar);
+        btn_entrar = (Button) findViewById(R.id.btn_entrar);
 
         prefs = getSharedPreferences("preferencias", MODE_PRIVATE);
         editor = prefs.edit();
 
-        if(prefs.getString("sessionToken",null)!=null){
+        if(prefs.getString("Token",null)!=null){
             i = new Intent(LoginActivity.this,MainActivity.class);
             startActivity(i);
             this.finish();
@@ -53,25 +50,25 @@ public class LoginActivity extends AppCompatActivity {
 
         // GREENDAO (HITO 2)
         // Creo la base de datos y la guardo en UsuariosDao
-        usuarioDao = Utiles.makeDataBase(this).getUsuariosDao();
+        //usuarioDao = Utiles.makeDataBase(this).getUsuariosDao();
 
-        register.setOnClickListener(new View.OnClickListener() {
+        btn_entrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String usuario = user.getText().toString();
-                String passw = pass.getText().toString();
+                usuario = user.getText().toString();
+                passw = pass.getText().toString();
 
                 // GREENDAO (HITO 2)
                 // Chequeo la conexión.
                 // Inserto los datos en la base de datos cuando haya conexión, para usarlos
                 // cuando no tenga internet.
-                if (Utiles.checkInternet(LoginActivity.this)) {
+//                if (Utiles.checkInternet(LoginActivity.this)) {
                     loadDataLogin(usuario, passw);
-                } else {
-                    i = new Intent(LoginActivity.this,MainActivity.class);
-                    startActivity(i);
-                    LoginActivity.this.finish();
-                }
+//                } else {
+//                    i = new Intent(LoginActivity.this, MainActivity.class);
+//                    startActivity(i);
+//                    LoginActivity.this.finish();
+//                }
 
             }
         });
@@ -79,8 +76,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void loadDataLogin(final String user, final String password){
+        Login newLogin = new Login();
+        newLogin.setUsername(usuario);
+        newLogin.setPassword(passw);
 
-        final Call<Login> loginCall = Utiles.pedirServicioConInterceptores().obtenerLogin(user, password);
+
+        final Call<Login> loginCall = Utiles.pedirServicioConInterceptores().loginUsuario(newLogin);
         loginCall.enqueue(new Callback<Login>() {
 
             @Override
@@ -88,38 +89,43 @@ public class LoginActivity extends AppCompatActivity {
                 Login login = response.body();
 
 
-                if (login != null) {
-                    if (login.getUsername().equals(user) && password.equals("12345")) {
-                        String sessionToken = login.getSessionToken();
-                        i = new Intent(LoginActivity.this, MainActivity.class);
+                errorCode = response.code();
 
-                        // GREENDAO (HITO 2)
-                        // Guardo en prefs la fecha de los sitios para más adelante comprobar updateAt
-                        editor.putString("sessionToken", sessionToken);
-                        if(prefs.getString("fecha_sitios",null) == null || prefs.getString("fecha_valoraciones",null) == null ||prefs.getString("fecha_comentarios",null) == null) {
-                            editor.putString("fecha_sitios", "0000-01-01T00:00:00.000Z");
-                            editor.putString("fecha_valoraciones", "0000-01-01T00:00:00.000Z");
-                            editor.putString("fecha_comentarios", "0000-01-01T00:00:00.000Z");
-                        }
-                        editor.apply();
 
-                        i.putExtra("sessionToken", sessionToken);
+                Log.d("TOKEN", login.getKey());
 
-                        startActivity(i);
-                        LoginActivity.this.finish();
-
-                        // GREENDAO (HITO 2)
-                        // Cuando tengo internet inserto los datos del usuario logueado
-                        Usuarios usuario_green = new Usuarios(login.getObjectId(),login.getUpdatedAt(),login.getSessionToken(),login.getUsername(),login.getNombre(),login.getEmail(),login.getFoto().getUrl());
-                        usuarioDao.insert(usuario_green);
-
-                    }else {
-                        Toast.makeText(LoginActivity.this, "Fallo de usuario o contraseña", Toast.LENGTH_SHORT).show();
-                    }
-
-                } else {
-                    Toast.makeText(LoginActivity.this, "Fallo de usuario o contraseña", Toast.LENGTH_SHORT).show();
-                }
+//                if (login != null) {
+//                    if (login.getUsername().equals(user) && password.equals("12345")) {
+//                        String sessionToken = login.getSessionToken();
+//                        i = new Intent(LoginActivity.this, MainActivity.class);
+//
+//                        // GREENDAO (HITO 2)
+//                        // Guardo en prefs la fecha de los sitios para más adelante comprobar updateAt
+//                        editor.putString("sessionToken", sessionToken);
+//                        if(prefs.getString("fecha_sitios",null) == null || prefs.getString("fecha_valoraciones",null) == null ||prefs.getString("fecha_comentarios",null) == null) {
+//                            editor.putString("fecha_sitios", "0000-01-01T00:00:00.000Z");
+//                            editor.putString("fecha_valoraciones", "0000-01-01T00:00:00.000Z");
+//                            editor.putString("fecha_comentarios", "0000-01-01T00:00:00.000Z");
+//                        }
+//                        editor.apply();
+//
+//                        i.putExtra("sessionToken", sessionToken);
+//
+//                        startActivity(i);
+//                        LoginActivity.this.finish();
+//
+//                        // GREENDAO (HITO 2)
+//                        // Cuando tengo internet inserto los datos del usuario logueado
+//                        Usuarios usuario_green = new Usuarios(login.getObjectId(),login.getUpdatedAt(),login.getSessionToken(),login.getUsername(),login.getNombre(),login.getEmail(),login.getFoto().getUrl());
+//                        usuarioDao.insert(usuario_green);
+//
+//                    }else {
+//                        Toast.makeText(LoginActivity.this, "Fallo de usuario o contraseña", Toast.LENGTH_SHORT).show();
+//                    }
+//
+//                } else {
+//                    Toast.makeText(LoginActivity.this, "Fallo de usuario o contraseña", Toast.LENGTH_SHORT).show();
+//                }
 
             }
 

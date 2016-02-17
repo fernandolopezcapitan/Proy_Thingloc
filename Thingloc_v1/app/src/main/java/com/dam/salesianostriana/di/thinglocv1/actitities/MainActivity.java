@@ -19,14 +19,7 @@ import android.widget.Toast;
 
 import com.dam.salesianostriana.di.thinglocv1.R;
 import com.dam.salesianostriana.di.thinglocv1.frgament.SitiosFragment;
-import com.dam.salesianostriana.di.thinglocv1.pojoschema.Login;
 import com.dam.salesianostriana.di.thinglocv1.utiles.Utiles;
-import com.squareup.picasso.Picasso;
-
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -69,12 +62,12 @@ public class MainActivity extends AppCompatActivity
         }*/
 
         prefs = getSharedPreferences("preferencias", MODE_PRIVATE);
-        sessionToken = prefs.getString("sessionToken", null);
+        sessionToken = prefs.getString("Token", null);
 
         // GREENDAO (HITO 2)
         // Chequeo la conexión. Si no la hay dejo el icono y el nombre de usuario anónimos
         if(Utiles.checkInternet(MainActivity.this)){
-            loadDataSessionToken(sessionToken,sessionToken);
+            //loadDataSessionToken(sessionToken,sessionToken);
         } else {
             avatarCabecera.setImageResource(R.drawable.ic_usuarios);
             nombreCabecera.setText("Anónimo");
@@ -140,8 +133,8 @@ public class MainActivity extends AppCompatActivity
             // Chequeo la conexión. Borrará sessiontoken de las preferencias y nos llevará a LoginActivity
             if(Utiles.checkInternet(MainActivity.this)){
 
-                cancelDataSessionToken(sessionToken);
-
+//                cancelDataSessionToken(sessionToken);
+//
                 Intent i = new Intent(MainActivity.this, LoginActivity.class);
                 editor = prefs.edit();
                 editor.remove("sessionToken");
@@ -177,7 +170,7 @@ public class MainActivity extends AppCompatActivity
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.contenedor,f).commit();
     }
-    private void loadDataSessionToken(final String sessionToken, final String sessionToken1){
+   /* private void loadDataSessionToken(final String sessionToken, final String sessionToken1){
 
         final Call<Login> loginCall = Utiles.pedirServicioConInterceptores().obtenerMisDatos(sessionToken, sessionToken1);
         loginCall.enqueue(new Callback<Login>() {
@@ -225,6 +218,6 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
-    }
+    }*/
 
 }

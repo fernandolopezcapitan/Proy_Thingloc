@@ -1,13 +1,15 @@
 package com.dam.salesianostriana.di.thinglocv1.utiles;
 
+
 import com.dam.salesianostriana.di.thinglocv1.pojoschema.Comentario;
-import com.dam.salesianostriana.di.thinglocv1.pojoschema.Login;
 import com.dam.salesianostriana.di.thinglocv1.pojoschema.Result;
 import com.dam.salesianostriana.di.thinglocv1.pojoschema.Sitios;
 import com.dam.salesianostriana.di.thinglocv1.pojoschema.pojoBares.Bares;
 import com.dam.salesianostriana.di.thinglocv1.pojoschema.pojoValoracion.Valoracion;
+import com.dam.salesianostriana.di.thinglocv1.pojosthingloc.Login;
 
 import retrofit.Call;
+import retrofit.http.Body;
 import retrofit.http.GET;
 import retrofit.http.Header;
 import retrofit.http.Headers;
@@ -25,15 +27,25 @@ public interface Api {
     // "https://api.parse.com", añadiéndoles las cabeceras (headers):
     // X-Parse-Application-Id: Usqpw9Za6WcJEWQGtjra1JqNWimf1SMPsVwQ2yWy
     // X-Parse-REST-API-Key: 4sZHPDkPA4NlZAAIVBVzGXIpLk59IpMwKHX4TTqR
-    @Headers({
-            "X-Parse-Application-Id: Usqpw9Za6WcJEWQGtjra1JqNWimf1SMPsVwQ2yWy",
-            "X-Parse-REST-API-Key: 4sZHPDkPA4NlZAAIVBVzGXIpLk59IpMwKHX4TTqR"
-    })
+//    @Headers({
+//            "X-Parse-Application-Id: Usqpw9Za6WcJEWQGtjra1JqNWimf1SMPsVwQ2yWy",
+//            "X-Parse-REST-API-Key: 4sZHPDkPA4NlZAAIVBVzGXIpLk59IpMwKHX4TTqR"
+//    })
 
     // Petición 1. Login.
     // REALIZA el proceso de autentificación del usuario.
     // ESPERA username y password, como parámetros URL-encoded.
     // DEVUELVE un json con todos los datos del usuario menos el password.
+
+
+    @Headers({"Content-Type: application/json"})
+    @POST("/rest-auth/login/")
+    Call<Login> loginUsuario(@Body Login valoracionNueva);
+
+
+
+
+
     @GET("/1/login")
     Call<Login> obtenerLogin(@Query ("username") String username,@Query ("password") String password);
 

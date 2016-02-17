@@ -33,8 +33,8 @@ public class Utiles {
 
                 //Aqui es donde añade las cabeceras anteriores para poder acceder al servicio
                 Request newRequest = chain.request().newBuilder()
-                        .addHeader("X-Parse-Application-Id", "Usqpw9Za6WcJEWQGtjra1JqNWimf1SMPsVwQ2yWy")
-                        .addHeader("X-Parse-REST-API-Key","4sZHPDkPA4NlZAAIVBVzGXIpLk59IpMwKHX4TTqR")
+                        //.addHeader("X-Parse-Application-Id", "Usqpw9Za6WcJEWQGtjra1JqNWimf1SMPsVwQ2yWy")
+                        //.addHeader("X-Parse-REST-API-Key","4sZHPDkPA4NlZAAIVBVzGXIpLk59IpMwKHX4TTqR")
                         .build();
 
                 return chain.proceed(newRequest);
@@ -45,7 +45,7 @@ public class Utiles {
         client.interceptors().add(interceptor);
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.parse.com")
+                .baseUrl("https://172.60.0.8:8000/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();

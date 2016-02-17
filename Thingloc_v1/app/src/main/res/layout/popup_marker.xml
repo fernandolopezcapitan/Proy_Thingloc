@@ -14,7 +14,7 @@
             android:layout_height="70dp"
             android:layout_marginRight="15dp"
             android:id="@+id/popup_fotobar"
-            android:src="@drawable/logoconletra"/>
+            android:src="@drawable/icon_lostfound"/>
 
         <LinearLayout
             android:layout_width="match_parent"
