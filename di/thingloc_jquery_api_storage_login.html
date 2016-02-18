@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>LOGIN THINGLOC</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container">
+  <div class="row">
+    <h2>Login THINGLOC</h2>
+    <div class="col-xs-12 col-sm-9">
+      Indica los datos de acceso
+    </div>
+  </div>
+
+  <hr/>
+
+  <!-- Mensaje error -->
+  <div class="row hidden" id="message">
+    <div class="col-xs-12">
+      <div class="alert alert-danger" role="alert">¿No estarás intentando hackearme? Prueba de nuevo.</div>
+    </div>
+    </div>
+
+
+
+  <div class="row">
+    <div class="col-xs-12 col-sm-3">
+
+    <!-- FORMULARIO -->
+    <form>
+	  <div class="form-group">
+	    <label for="exampleInputUser1">Username</label>
+	    <input type="text" class="form-control" id="inputUser" placeholder="Username">
+	  </div>
+	  <div class="form-group">
+	    <label for="exampleInputPassword1">Password</label>
+	    <input type="password" class="form-control" id="inputPassword" placeholder="Password">
+	  </div>
+	  <button type="button" id="btnLogin" class="btn btn-default">Login</button>
+	  <button type="button" id="btnRegister" class="btn btn-default">Registro</button>
+	</form>
+  <!-- /FORMULARIO -->
+  </div>
+  </div>
+</div>
+
+
+<!-- MODAL LOADING -->
+<div class="modal fade" tabindex="-1" role="dialog" id="modalLoading">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="title-loading">Cargando...</h4>
+      </div>
+      <div class="modal-body">
+
+      </div>
+      <div class="modal-footer">
+        <div class="progress">
+        <div class="progress-bar progress-bar-striped active" id="progressbar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+          <span id="loading-number">0% completado</span>
+        </div>
+      </div>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<!-- /MODAL LOADING -->
+
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<script src="./ydn.db-is-core-qry.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+<script>
+$(document).ready(function(){
+
+  var db = new ydn.db.Storage('db-app-login');
+  db.get('usuario_login', 'idlogin').always(function(user) {
+    // Imprimo por la consola del navegador los datos del usuario
+    console.log(user);
+	if(user != undefined) {
+      window.location.href = "./thingloc_jquery_api_storage_logged.html";
+    } else {
+      $("body").removeClass('hide');
+      console.log(user);
+      $('#user-email').text(user.email);
+    }
+
+  });
+	
+// AJAX para cargar los datos del ranking
+  function reloadLogin() {
+  $.ajax({
+      type: "GET",
+      url: "http://172.27.60.8:8000/api/objeto?search=flopez/"
+      //url: "http://rest.miguelcr.com/keeper/login?&email=XXXX&password=XXXX",
+      header: {
+        "Authorization":"Token b936b4b32f4c7795b96efac1226938c991d65c8d",
+        "Content-Type":"application/json"}
+      data: "",
+      dataType: "json", //set to JSON
+      success: function(respuesta)
+      {
+          /*respuesta = '[ { "mensaje": "Registro realizado" } ]  '*/
+          console.log(respuesta);
+          var json_obj = $.parseJSON(respuesta);//parse JSON
+          var output="";
+          var cont = 1;
+          for (var i in json_obj)
+          {
+              output += '<tr><td>'+cont+'</td><td class="nick">'+json_obj[i].nickname+'</td><td><input type="number" min="0" class="points" value="'+json_obj[i].points+'"/></td></tr>';
+              cont++;
+          }
+          $('#ranking').html(output);
+
+
+      },
+      error: function(error) {
+        alert("No se ha podido obtener el login. Inténtelo de nuevo");
+      }
+  });
+
+
+
+$(document).on("click","#btnLogin",function(){
+    var email = $("#inputEmail").val();
+    var password = $("#inputPassword").val();
+    // Email & password correcto
+    if((email=="admin@admin.com" && password=="1234")
+        || (email=="gestor@admin.com" && password=="1234")) {
+      $("#message").addClass("hidden");
+      db.put('usuario_login', {email: email}, 'idlogin');
+      $("#modalLoading").modal('show');
+      for(i=1; i<=100; i++) {
+        var tiempo = 100+i*700;
+        setTimeout(function(){
+          $("#progressbar").css("width",i+"%");
+          $('#loading-number').text(i+"% completado");
+        }, tiempo);
+      }
+      // Redirección a la página de usuario logueado
+      setTimeout(function(){
+        $("#modalLoading").modal('hide');
+        window.location.href = "./02_jquery_api_storage_logged.html";
+      }, 2000);
+    } else {
+      $("#message").removeClass("hidden");
+    }
+});
+});
+</script>
+</body>
+</html>

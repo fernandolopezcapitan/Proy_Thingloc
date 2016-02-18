@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Método parent</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+</head>
+<body class="hide">
+
+<div class="container">
+  <div class="row">
+    <h2>Panel de control</h2>
+    <div class="col-xs-12 col-sm-9" id="user-profile">
+      <span id="user-email"></span>
+    </div>
+    <div class="col-xs-12 col-sm-3">
+      <button type="button" class="btn btn-small btn-primary" data-toggle="modal" data-target="#modalNewUser">
+        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Nuevo usuario
+      </button>
+      <button id="btn-logout" type="button" class="btn btn-small btn-danger">
+        <span class="glyphicon glyphicon-share" aria-hidden="true"></span> Salir
+      </button>
+    </div>
+
+  </div>
+  <hr/>
+  <table class="table" id="table-users">
+    <thead>
+      <tr>
+        <th>Firstname</th>
+        <th>Lastname</th>
+        <th>Email</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr id="user-1">
+        <td>John</td>
+        <td>Doe</td>
+        <td>john@example.com</td>
+        <td>
+          <button type="button" class="btn btn-small btn-danger btn-delete-user">
+            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Eliminar
+          </button>
+        </td>
+      </tr>
+      <tr id="user-2">
+        <td>Mary</td>
+        <td>Moe</td>
+        <td>mary@example.com</td>
+        <td>
+          <button type="button" class="btn btn-small btn-danger btn-delete-user">
+            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Eliminar
+          </button>
+        </td>
+      </tr>
+      <tr id="user-3">
+        <td>July</td>
+        <td>Dooley</td>
+        <td>july@example.com</td>
+        <td>
+          <button type="button" class="btn btn-small btn-danger btn-delete-user">
+            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Eliminar
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modalNewUser" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Nuevo usuario</h4>
+      </div>
+      <div class="modal-body">
+        <div class="input-group">
+          <span class="input-group-addon" id="sizing-addon2">@</span>
+          <input type="text" class="form-control" placeholder="Nombre" aria-describedby="sizing-addon2" id="nameNewUser">
+        </div>
+        <br/><br/>
+        <div class="input-group">
+          <span class="input-group-addon" id="sizing-addon2">@</span>
+          <input type="text" class="form-control" placeholder="Apellidos" aria-describedby="sizing-addon2" id="lastNameNewUser">
+        </div>
+        <br/><br/>
+        <div class="input-group">
+          <span class="input-group-addon" id="sizing-addon2">@</span>
+          <input type="email" class="form-control" placeholder="Email" aria-describedby="sizing-addon2" id="emailNewUser">
+        </div>
+        <br/><br/>
+        <div class="btn-group" data-toggle="buttons">
+          <label class="btn btn-danger active">
+            <input type="radio" name="color" id="option1" autocomplete="off" checked="checked" value="danger"> Rojo
+          </label>
+          <label class="btn btn-success">
+            <input type="radio" name="color" id="option2" autocomplete="off" value="success"> Verde
+          </label>
+          <label class="btn btn-primary">
+            <input type="radio" name="color" id="option3" autocomplete="off" value="primary"> Azul
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" id="btnSaveUser">
+          <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /Modal -->
+
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<script src="./ydn.db-is-core-qry.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+<script>
+$(document).ready(function(){
+  // Establezco el nombre de la base de datos local.
+  var db = new ydn.db.Storage('db-app-login');
+  db.get('usuario_login', 'idlogin').always(function(user) {
+    // Imprimo por la consola del navegador los
+    // datos del usuario
+    if(user==undefined) {
+      window.location.href = "./02_jquery_api_storage_login.html";
+    } else {
+      $("body").removeClass('hide');
+      console.log(user);
+      $('#user-email').text(user.email);
+    }
+  });
+  $(document).on("click","#btn-logout",function(){
+    db.clear();
+    window.location.href = "./02_jquery_api_storage_login.html";
+  });
+$( "body" ).on("click",".btn-delete-user",function(){
+  var fila = $(this).closest("tr");
+  var idCompleto = fila.attr('id'); // Me devuelve por ejemplo: user-3
+  var arrayId = idCompleto.split("-"); // El separador es el '-'. arrayId[0] => user, arrayId[1] => 3
+  var id = arrayId[1];
+  var nombreUsuario = $('#user-'+id+' td').first().text();
+  //var nombreUsuario = $('#'+idCompleto+' td').first().text();
+  //alert(nombreUsuario);
+  $(this).closest("tr").remove();
+  //var htmlAlert = '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>Eliminado!</strong> El usuario '+nombreUsuario+' ha sido eliminado.</div>';
+});
+// MODAL
+$('#btnSaveUser').on("click",function(){
+  // Añadir nueva fila a la tabla con los datos del usuario
+  var nombre = $('#nameNewUser').val();
+  var apellidos = $('#lastNameNewUser').val();
+  var email = $('#emailNewUser').val();
+  var numFilas = $("#table-users tr").length;
+  var id = numFilas+1;
+  var color = $('input[name=color]:checked').val();
+  var htmlNuevaFila = '<tr id="user-'+id+'"><td>'+nombre+'</td><td>'+apellidos+'</td><td>'+email+'</td><td><button type="button" class="btn btn-small btn-'+color+' btn-delete-user"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Eliminar</button></td></tr>';
+  $("#table-users").append(htmlNuevaFila);
+  $('#modalNewUser').modal('hide');
+    // Limpio los campos del formulario
+    $('#nameNewUser').val('');
+    $('#lastNameNewUser').val('');
+    $('#emailNewUser').val('');
+});
+});
+</script>
+</body>
+</html>
