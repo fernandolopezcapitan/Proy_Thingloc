@@ -1,26 +1,20 @@
-package com.salesianostriana.dam.thingloc_v2.pojosthingloc;
+package com.salesianostriana.dam.thingloc_v2.pojosthingloc.registro;
 
 /**
- * Created by flopez on 17/02/2016.
+ * Created by flopez on 18/02/2016.
  */
 public class Login {
+    String username,password;
 
-    private String username;
-    private String password;
-    private String key;
-
-    public Login() {
-    }
 
     public Login(String username, String password) {
         this.username = username;
         this.password = password;
     }
 
-    public Login(String username, String password, String key) {
-        this.username = username;
-        this.password = password;
-        this.key = key;
+
+    public Login() {
+
     }
 
     public String getUsername() {
@@ -39,11 +33,13 @@ public class Login {
         this.password = password;
     }
 
-    public String getKey() {
-        return key;
-    }
 
-    public void setKey(String key) {
-        this.key = key;
+
+    @Override
+    public String toString() {
+        return "Login{" +
+                "username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                '}';
     }
 }

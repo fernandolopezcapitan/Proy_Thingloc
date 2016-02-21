@@ -1,22 +1,30 @@
-package com.salesianostriana.dam.thingloc_v2.pojosthingloc.Objetos;
+package com.salesianostriana.dam.thingloc_v2.pojosthingloc.objeto;
 
-/**
- * Created by flopez on 17/02/2016.
- */
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class Result {
 
+    @SerializedName("id")
+    @Expose
     private Long id;
-
+    @SerializedName("nombre")
+    @Expose
     private String nombre;
-
+    @SerializedName("recompensa")
+    @Expose
     private Double recompensa;
-
+    @SerializedName("perdido")
+    @Expose
     private Boolean perdido;
-
+    @SerializedName("foto")
+    @Expose
     private String foto;
-
+    @SerializedName("coordenadas")
+    @Expose
     private String coordenadas;
-
+    @SerializedName("loadDataCategoria")
+    @Expose
     private String categoria;
 
     /**
@@ -157,7 +165,7 @@ public class Result {
     /**
      *
      * @return
-     * The categoria
+     * The loadDataCategoria
      */
     public String getCategoria() {
         return categoria;
@@ -166,7 +174,7 @@ public class Result {
     /**
      *
      * @param categoria
-     * The categoria
+     * The loadDataCategoria
      */
     public void setCategoria(String categoria) {
         this.categoria = categoria;

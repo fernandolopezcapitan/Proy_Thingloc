@@ -10,6 +10,11 @@
             android:icon="@android:drawable/ic_menu_slideshow"
             android:title="Objetos perdidos" />
 
+        <item
+            android:id="@+id/add_objeto_nuevo"
+            android:icon="@android:drawable/ic_menu_add"
+            android:title="Añadir Objeto" />
+
         <!-- <item android:id="@+id/nav_gallery"
             android:icon="@android:drawable/ic_menu_gallery"
             android:title="Gallery" />
@@ -21,7 +26,12 @@
     </group>
 
     <item android:title="Mi perfil">
+
         <menu>
+            <item
+                android:id="@+id/objeto"
+                android:icon="@android:drawable/ic_menu_add"
+                android:title="Añadir Objeto" />
             <item android:id="@+id/nav_cerrar_sesion"
                 android:icon="@drawable/ic_cerrarsesion"
                 android:title="Cerrar sesión" />

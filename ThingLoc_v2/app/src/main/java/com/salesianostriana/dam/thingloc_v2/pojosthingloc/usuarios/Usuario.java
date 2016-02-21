@@ -1,15 +1,23 @@
-package com.salesianostriana.dam.thingloc_v2.pojosthingloc;
+package com.salesianostriana.dam.thingloc_v2.pojosthingloc.usuarios;
+
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 
-
-/**
- * Created by flopez on 17/02/2016.
- */
 public class Usuario {
 
+
+    @SerializedName("username")
+    @Expose
     private String username;
+    @SerializedName("email")
+    @Expose
     private String email;
+    @SerializedName("first_name")
+    @Expose
     private String firstName;
+    @SerializedName("last_name")
+    @Expose
     private String lastName;
 
     /**

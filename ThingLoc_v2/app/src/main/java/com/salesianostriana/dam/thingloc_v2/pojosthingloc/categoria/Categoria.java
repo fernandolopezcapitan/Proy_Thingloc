@@ -1,18 +1,24 @@
-package com.salesianostriana.dam.thingloc_v2.pojosthingloc.Categorias;
+package com.salesianostriana.dam.thingloc_v2.pojosthingloc.categoria;
 
-
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by flopez on 17/02/2016.
- */
-public class Categoria {
 
+public class Categoria {
+    @SerializedName("count")
+    @Expose
     private Long count;
+    @SerializedName("next")
+    @Expose
     private Object next;
+    @SerializedName("previous")
+    @Expose
     private Object previous;
+    @SerializedName("results")
+    @Expose
     private List<Result> results = new ArrayList<Result>();
 
     /**

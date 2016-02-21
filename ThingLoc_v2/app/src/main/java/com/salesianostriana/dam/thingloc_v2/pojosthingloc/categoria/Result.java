@@ -1,12 +1,16 @@
-package com.salesianostriana.dam.thingloc_v2.pojosthingloc.Categorias;
+package com.salesianostriana.dam.thingloc_v2.pojosthingloc.categoria;
+
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 
-/**
- * Created by flopez on 17/02/2016.
- */
 public class Result {
 
+    @SerializedName("id")
+    @Expose
     private Long id;
+    @SerializedName("nombre")
+    @Expose
     private String nombre;
 
     /**

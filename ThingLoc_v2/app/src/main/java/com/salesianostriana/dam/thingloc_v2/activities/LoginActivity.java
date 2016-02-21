@@ -11,7 +11,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.salesianostriana.dam.thingloc_v2.R;
-import com.salesianostriana.dam.thingloc_v2.pojosthingloc.Login;
+import com.salesianostriana.dam.thingloc_v2.pojosthingloc.registro.Login;
+import com.salesianostriana.dam.thingloc_v2.pojosthingloc.registro.Token;
+import com.salesianostriana.dam.thingloc_v2.pojosthingloc.usuarios.Usuario;
 import com.salesianostriana.dam.thingloc_v2.utiles.Utiles;
 
 import retrofit.Call;
@@ -39,14 +41,14 @@ public class LoginActivity extends AppCompatActivity {
         btn_entrar = (Button) findViewById(R.id.btn_entrar);
         btn_registrar = (Button) findViewById(R.id.btn_register);
 
-        prefs = getSharedPreferences("preferencias", MODE_PRIVATE);
+        /*prefs = getSharedPreferences("preferencias", MODE_PRIVATE);
         editor = prefs.edit();
 
         if(prefs.getString("Token ",null) != null){
             i = new Intent(LoginActivity.this,MainActivity.class);
             startActivity(i);
             this.finish();
-        }
+        }*/
 
         btn_entrar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,10 +56,16 @@ public class LoginActivity extends AppCompatActivity {
                 usuario = user.getText().toString();
                 passw = pass.getText().toString();
 
-                // Petición 1 con Retrofit
-                // REALIZA el proceso de autenticación del usuario y nos permite obtener el
-                // código de sesión necesario para realizar otras.
-                loadDataLogin(usuario, passw);
+                if (usuario.equalsIgnoreCase("") || passw.equalsIgnoreCase("")){
+                    Toast.makeText(LoginActivity.this, "Falta usuario o contraseña", Toast.LENGTH_LONG).show();
+                } else {
+
+                    // Petición 1. Login. con Retrofit
+                    // REALIZA el proceso de autenticación del usuario y nos permite obtainOfPreferences el
+                    // código de sesión necesario para realizar otras.
+                    loadDataLogin(usuario, passw);
+                }
+
 
             }
         });
@@ -78,26 +86,36 @@ public class LoginActivity extends AppCompatActivity {
         newLogin.setPassword(passw);
 
 
-        final Call<Login> loginCall = Utiles.pedirServicioConInterceptores().loginUsuario(newLogin);
-        loginCall.enqueue(new Callback<Login>() {
+        final Call<Token> loginCall = Utiles.pedirServicioConInterceptores().loginUsuario(newLogin);
+        loginCall.enqueue(new Callback<Token>() {
 
             @Override
-            public void onResponse(Response<Login> response, Retrofit retrofit) {
-                Login login = response.body();
+            public void onResponse(Response<Token> response, Retrofit retrofit) {
 
+                // Obtenidos todos los datos y guardados en Token
+                Token login = response.body();
                 errorCode = response.code();
-                Log.d("TOKEN", login.getKey());
 
-                if ((errorCode == 200) || (errorCode == 201)){
+                Utiles.saveInPreferences(LoginActivity.this, "token", "Token " + login.getKey());
 
-                    editor.putString("Token ", login.getKey().toString());
+                Log.i("TOKEN", String.valueOf(response.body()));
+                Log.i("CÓDIGO DE ERROR", String.valueOf(errorCode));
+
+                if ((errorCode == 200) || (errorCode == 201)) {
+
+                    // Petición 2. User (Me). Con Retrofit
+                    // Identifica el usuario logueado a partir de un token, y obtiene sus datos.
+                    // ESPERA Token (obtenido en el login).
+                    loadDataUser();
+
+                    /*editor.putString("Token ", login.getKey().toString());
                     editor.commit();
                     i = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(i);
-                    LoginActivity.this.finish();
+                    LoginActivity.this.finish();*/
 
-                }else{
-                    Toast.makeText(LoginActivity.this, "Fallo de usuario o contraseña", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(LoginActivity.this, "No es posible entrar", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -106,6 +124,47 @@ public class LoginActivity extends AppCompatActivity {
             public void onFailure(Throwable t) {
 
             }
+        });
+    }
+
+    public void loadDataUser(){
+
+        Call<Usuario> userCall = Utiles.serviceConInterceptorsAuth(getBaseContext()).obtenerMisDatos();
+
+        userCall.enqueue(new Callback<Usuario>() {
+            @Override
+            public void onResponse(Response<Usuario> response, Retrofit retrofit) {
+
+                Usuario result = response.body();
+                errorCode = response.code();
+
+                Log.i("USUARIO", String.valueOf(result));
+                Log.i("CÓDIGO DE ERROR", String.valueOf(errorCode));
+
+                if ((errorCode == 200)|| (errorCode == 201)) {
+
+                    Log.i("USERNAME", result.getUsername());
+
+                    Utiles.saveInPreferences(getBaseContext(), "username", result.getUsername());
+                    Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(i);
+                    finish();
+
+
+                } else {
+                    Toast.makeText(LoginActivity.this, "No es posible entrar (toekn)", Toast.LENGTH_SHORT).show();
+
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+
+            }
+
+
         });
     }
 }

@@ -4,8 +4,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,14 +15,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.salesianostriana.dam.thingloc_v2.R;
-import com.salesianostriana.dam.thingloc_v2.pojosthingloc.Usuario;
+import com.salesianostriana.dam.thingloc_v2.fragments.ObjetosAddFragment;
+import com.salesianostriana.dam.thingloc_v2.fragments.ObjetosFragment;
+import com.salesianostriana.dam.thingloc_v2.pojosthingloc.registro.Logout;
+import com.salesianostriana.dam.thingloc_v2.scancode.DecoderActivity;
 import com.salesianostriana.dam.thingloc_v2.utiles.Utiles;
-import com.squareup.picasso.Picasso;
 
 import retrofit.Call;
 import retrofit.Callback;
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity
     SharedPreferences prefs;
     SharedPreferences.Editor editor;
     String sessionToken;
+    int errorCode;
     //ImageView avatarCabecera;
     TextView usuarioCabecera, emailCabecera;
 
@@ -50,10 +52,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
 
-                // TODO Añadir la funcionalidad escanear códigos Qr
-
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent inte = new Intent(MainActivity.this, DecoderActivity.class);
+                startActivity(inte);
             }
         });
 
@@ -69,21 +69,14 @@ public class MainActivity extends AppCompatActivity
         View cabeceraMenuLateral = navigationView.getHeaderView(0);
         //avatarCabecera = (ImageView)cabeceraMenuLateral.findViewById(R.id.icono_navegation);
         usuarioCabecera = (TextView)cabeceraMenuLateral.findViewById(R.id.username_navigation);
+
+        String nombreCabecera = Utiles.obtainOfPreferences(getBaseContext(), "username");
+        usuarioCabecera.setText(nombreCabecera);
+
+        // TODO Pediente, imagen de cabecera
         emailCabecera = (TextView)cabeceraMenuLateral.findViewById(R.id.email_navigation);
 
-
-
-        // TODO Abre de inicio Sitios Fragment
-        //transicionPagina(new ObjetosFragment());
-
-        prefs = getSharedPreferences("preferencias", MODE_PRIVATE);
-        sessionToken = prefs.getString("Token ", null);
-
-
-        // TODO
-        //loadDataSessionToken(sessionToken,sessionToken);
-
-
+        transicionPagina(new ObjetosFragment());
 
     }
 
@@ -130,24 +123,23 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.escanear) {
 
-            // TODO Añadir la funcionalidad escanear códigos Qr
+            Intent inte = new Intent(this, DecoderActivity.class);
+            startActivity(inte);
 
         } else if (id == R.id.objetos_perdidos) {
 
-            //TODO
-            //f = new ObjetosFragment();
+            f = new ObjetosFragment();
+
+        } else if (id == R.id.add_objeto_nuevo){
+
+            //TODO Funcionalidad añadir objetos
+            f = new ObjetosAddFragment();
 
         } else if (id == R.id.nav_cerrar_sesion) {
 
-            //TODO
-            //cancelDataSessionToken(sessionToken);
-
-            Intent i = new Intent(MainActivity.this, LoginActivity.class);
-            editor = prefs.edit();
-            editor.remove("Token ");
-            editor.apply();
-            startActivity(i);
-            this.finish();
+            // Petición 3. Logout.
+            // REALIZA el proceso de logout, eliminando el session token.
+            cancelDataSessionToken();
 
         }
 
@@ -169,43 +161,35 @@ public class MainActivity extends AppCompatActivity
                 .replace(R.id.contenedor,f).commit();
     }
 
-    private void loadDataSessionToken(final String sessionToken/*, final String sessionToken1*/){
 
-        final Call<Usuario> loginCall = Utiles.serviceConInterceptors2(MainActivity.this).obtenerMisDatos(sessionToken);
-        loginCall.enqueue(new Callback<Usuario>() {
+
+    private void cancelDataSessionToken() {
+
+        final Call<Logout> loginCall = Utiles.serviceConInterceptorsAuth(getBaseContext()).cerrarSesion();
+        loginCall.enqueue(new Callback<Logout>() {
 
             @Override
-            public void onResponse(Response<Usuario> response, Retrofit retrofit) {
-                Usuario usuario = response.body();
+            public void onResponse(Response<Logout> response, Retrofit retrofit) {
 
-                if (usuario != null) {
+                Logout result = response.body();
+                errorCode = response.code();
 
-                    usuarioCabecera.setText(usuario.getUsername().toString());
-                    emailCabecera.setText(usuario.getEmail().toString());
-                    //Picasso.with(MainActivity.this).load(usuario.getFoto().getUrl()).fit().placeholder(R.drawable.ic_usuarios).into(avatarCabecera);
+                Log.i("ERROR", String.valueOf(errorCode));
+
+                if (errorCode == 200) {
+
+                    Log.i("Logout", result.getSuccess());
+                    Utiles.cleanPreferences(getBaseContext());
+                    Intent inte = new Intent(getBaseContext(), LoginActivity.class);
+                    startActivity(inte);
+                    finish();
+                    Toast.makeText(MainActivity.this, "Sesión cerrada", Toast.LENGTH_SHORT).show();
 
                 } else {
 
-                    Toast.makeText(MainActivity.this, "No se han podido cargar los datos de usuario", Toast.LENGTH_SHORT).show();
+
                 }
 
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-
-            }
-        });
-    }
-
-    private void cancelDataSessionToken(final String sessionToken) {
-        final Call<Usuario> loginCall = Utiles.pedirServicioConInterceptores().cerrarSesion(sessionToken);
-        loginCall.enqueue(new Callback<Usuario>() {
-
-            @Override
-            public void onResponse(Response<Usuario> response, Retrofit retrofit) {
-
-                Toast.makeText(MainActivity.this, "Sesión cerrada", Toast.LENGTH_SHORT).show();
 
             }
 
