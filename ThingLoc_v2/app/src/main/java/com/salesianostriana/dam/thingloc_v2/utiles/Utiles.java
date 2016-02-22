@@ -28,7 +28,7 @@ public class Utiles {
 
 
     // Declaración de variables de preferencias estáticas
-    public static String urlbase ="http://172.27.0.8:8000/";//colegio
+    public static String urlbase ="http://172.27.60.8:8000/";//colegio
     //public static String urlbase ="http://192.168.1.34:8000/";//maquinacasa
     public static SharedPreferences sp;
     public static String ruta="";
@@ -36,7 +36,7 @@ public class Utiles {
 
     private Api pedirServicio(){
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://172.60.0.8:8000/")
+                .baseUrl("http://172.27.60.8:8000/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         Api service = retrofit.create(Api.class);
