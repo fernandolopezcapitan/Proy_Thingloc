@@ -1,0 +1,136 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.salesianostriana.dam.thingloc_v2.fragments.ObjetosAddFragment">
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@android:drawable/ic_menu_save" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_margin="5dp">
+
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:src="@drawable/icon_lostfound"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/img_logo_obj"/>
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:hint="Nombre del objeto"
+            android:padding="10dp"
+            android:id="@+id/tv_nombre_objeto"
+            android:layout_gravity="center_horizontal" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:layout_gravity="center_horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Recompensa:"
+                android:paddingRight="20dp"
+                android:id="@+id/tv_recompensa_objeto"
+                android:textStyle="italic"
+                android:layout_gravity="center_vertical" />
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:hint="0.0"
+                android:inputType="numberDecimal"
+                android:paddingRight="20dp"
+                android:id="@+id/tv_recompensa_dinero"
+                android:textStyle="italic"
+                android:layout_gravity="center_vertical" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:layout_gravity="center_horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Coordenadas: "
+
+                android:paddingRight="20dp"
+                android:id="@+id/tv_coordenadas_objeto"
+                android:textStyle="italic"
+                android:layout_gravity="center_vertical" />
+
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:hint="37.380346,-6.007744"
+                android:paddingRight="20dp"
+                android:id="@+id/tv_coordenadas_latlong"
+                android:textStyle="italic"
+                android:layout_gravity="center_vertical" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:layout_gravity="center_horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Categoria: "
+                android:paddingRight="20dp"
+                android:id="@+id/tv_categoria_objeto"
+                android:textStyle="italic"
+                android:layout_gravity="center_vertical" />
+
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:hint="categoria"
+                android:paddingRight="20dp"
+                android:id="@+id/tv_categoria_elegir"
+                android:textStyle="italic"
+                android:layout_gravity="center_vertical" />
+
+        </LinearLayout>
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Perdido"
+            android:id="@+id/switch1"
+            android:checked="true"
+            android:layout_below="@+id/tv_perdido"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="center_horizontal" />
+
+
+
+
+
+    </LinearLayout>
+
+
+
+</FrameLayout>

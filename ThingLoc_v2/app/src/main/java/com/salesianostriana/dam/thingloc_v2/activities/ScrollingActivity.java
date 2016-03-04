@@ -119,8 +119,15 @@ public class ScrollingActivity extends AppCompatActivity {
                     // Petición 8. Obtener todas las categorias.
                     // DEVUELVE un listado con todas las categorias
                     // ESPERA Token (obtenido en el login).
-                    String[]cat = result.getCategoria().split("/");
-                    loadDataCategoria(cat[5]);
+//                    String[]cat = result.getCategoria().split("/");
+//                    Log.i("categoria0", cat[0]);
+//                    Log.i("categoria1", cat[1]);
+//                    Log.i("categoria2", cat[2]);
+//                    Log.i("categoria3", cat[3]);
+//                    Log.i("categoria4", cat[4]);
+//                    Log.i("categoria5", cat[5]);
+//
+//                    loadDataCategoria(cat[5]);
 
                     // Petición 9. Obtener todos los mensajes de un objeto.
                     // DEVUELVE el listado con todos los mensajes de chat de un objeto concreto.
